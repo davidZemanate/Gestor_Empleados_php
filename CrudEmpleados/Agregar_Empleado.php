@@ -1,5 +1,4 @@
 <?php
-// Incluye la configuración de la base de datos y el modelo de Empleado
 require_once 'configuracion/database.php';
 require_once 'modelo/Empleado.php';
 
@@ -10,24 +9,55 @@ $empleado = new Empleado();
 $nombre = $_POST['nombre'] ?? '';
 $email = $_POST['email'] ?? '';
 $sexo = $_POST['sexo'] ?? '';
-$area = $_POST['area'] ?? ''; // Asegúrate de que esto es un valor de tipo entero
+$areas = $_POST['area'] ?? [];
 $descripcion = $_POST['descripcion'] ?? '';
-$boletin = isset($_POST['boletin']) ? 1 : 0; // 1 si está marcado, 0 si no
-$rol = $_POST['rol'] ?? ''; // Asegúrate de que esto es un valor de tipo entero
+$boletin = isset($_POST['boletin']) ? 1 : 0;
+$roles = $_POST['rol'] ?? [];
 
-// Validar los datos (simple validación; puedes agregar más según sea necesario)
-if (empty($nombre) || empty($email) || empty($sexo) || empty($area) || empty($rol)) {
-    die('Todos los campos son requeridos.');
+// Validar los datos en el servidor
+$errors = [];
+
+// Validar nombre
+if (empty($nombre) || !preg_match("/^[a-zA-Z\s]+$/", $nombre)) {
+    $errors[] = 'Nombre inválido. Solo se permiten letras y espacios.';
 }
 
-// Asegúrate de que $area y $rol son enteros
-$area = (int)$area;
-$rol = (int)$rol;
+// Validar correo electrónico
+if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = 'Correo electrónico inválido.';
+}
+
+// Validar sexo
+if (empty($sexo) || !in_array($sexo, ['Masculino', 'Femenino'])) {
+    $errors[] = 'Sexo inválido.';
+}
+
+// Validar áreas
+$validAreas = array_column($empleado->getAreas(), 'id');
+$invalidAreas = array_diff($areas, $validAreas);
+
+if (!empty($invalidAreas)) {
+    $errors[] = 'Área inválida.';
+}
+
+// Validar roles
+$validRoles = array_column($empleado->getRoles(), 'id');
+$invalidRoles = array_diff($roles, $validRoles);
+
+if (!empty($invalidRoles)) {
+    $errors[] = 'Rol inválido.';
+}
+
+// Si hay errores, redirigir con mensajes de error
+if (!empty($errors)) {
+    header('Location: index.php?errors=' . urlencode(implode(', ', $errors)));
+    exit;
+}
 
 // Llamar al método para agregar el empleado
-$resultado = $empleado->addEmpleado($nombre, $email, $sexo, $area, $descripcion, $boletin, $rol);
+$resultado = $empleado->addEmpleado($nombre, $email, $sexo, $areas[0], $descripcion, $boletin, $roles[0]);
 
-// Redirigir según el resultado
+// Redirigir con mensaje de éxito o error
 if ($resultado) {
     header('Location: index.php?success=Empleado agregado exitosamente.');
 } else {

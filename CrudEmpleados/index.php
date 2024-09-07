@@ -1,5 +1,6 @@
 <?php
-// Incluye el controlador
+
+require_once 'configuracion/sql.php';
 require_once 'controlador/EmpleadoControler.php';
 
 // Crear instancia del controlador
@@ -13,6 +14,7 @@ $roles = $controller->getRoles();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +23,16 @@ $roles = $controller->getRoles();
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Incluir FontAwesome CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <!-- Estilos personalizados -->
-    <link href="css/style.css" rel="stylesheet">
+    
 </head>
+
+
 <body>
     <header class="bg-primary text-white text-center p-3">
         <h1>Gestión de Empleados</h1>
     </header>
 
-    <div class="container mt-4">
+    <div class="container mt-4" style="min-height: 440px;">
         <!-- Botón para abrir el modal -->
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addEmployeeModal">
             <i class="fas fa-plus"></i> Agregar Empleado
@@ -49,21 +52,21 @@ $roles = $controller->getRoles();
             </thead>
             <tbody>
                 <?php foreach ($empleados as $emp): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($emp['nombre']); ?></td>
-                    <td><?php echo htmlspecialchars($emp['email']); ?></td>
-                    <td><?php echo htmlspecialchars($emp['sexo']); ?></td>
-                    <td><?php echo htmlspecialchars($emp['area_id']); ?></td>
-                    <td><?php echo htmlspecialchars($emp['rol_id']); ?></td>
-                    <td>
-                        <a href="edit.php?id=<?php echo $emp['id']; ?>" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Editar
-                        </a>
-                        <a href="Eliminar_Empleado.php?id=<?php echo $emp['id']; ?>" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td><?php echo htmlspecialchars($emp['nombre']); ?></td>
+                        <td><?php echo htmlspecialchars($emp['email']); ?></td>
+                        <td><?php echo htmlspecialchars($emp['sexo']); ?></td>
+                        <td><?php echo htmlspecialchars($emp['area_nombre']); ?></td>
+                        <td><?php echo htmlspecialchars($emp['rol_nombre']); ?></td>
+                        <td>
+                            <a href="edit.php?id=<?php echo $emp['id']; ?>" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="Eliminar_Empleado.php?id=<?php echo $emp['id']; ?>" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -92,11 +95,11 @@ $roles = $controller->getRoles();
                         <div class="form-group">
                             <label for="sexo">Sexo</label>
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="sexo_masculino" name="sexo[]" value="Masculino">
+                                <input type="radio" class="form-check-input" id="sexo_masculino" name="sexo" value="Masculino">
                                 <label class="form-check-label" for="sexo_masculino">Masculino</label>
                             </div>
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="sexo_femenino" name="sexo[]" value="Femenino">
+                                <input type="radio" class="form-check-input" id="sexo_femenino" name="sexo" value="Femenino">
                                 <label class="form-check-label" for="sexo_femenino">Femenino</label>
                             </div>
                         </div>
@@ -132,17 +135,107 @@ $roles = $controller->getRoles();
             </div>
         </div>
     </div>
-   
+
+    <?php if (isset($_GET['errors'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?php echo htmlspecialchars($_GET['errors']); ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?php echo htmlspecialchars($_GET['success']); ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?php echo htmlspecialchars($_GET['error']); ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+<?php endif; ?>
+
 
     <footer class="bg-dark text-white text-center p-3 mt-4">
-        <p>&copy; <?php echo date("Y"); ?> Tu Empresa. Todos los derechos reservados.</p>
+        <p>&copy; <?php echo date("Y"); ?> Desarrollo en PHP. Desarrollado por David Fernando Zemanate.</p>
     </footer>
 
     <!-- Incluir jQuery y Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- Cambiar a la versión completa -->
+  
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Estilos personalizados -->
-    <script src="js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="asstes\js\validacion.js"></script>
+
+    
+    <script>
+        $(document).ready(function () {
+            $("#addEmployeeForm").validate({
+                rules: {
+                    nombre: {
+                        required: true,
+                        minlength: 3,
+                        regex: /^[a-zA-Z\s]+$/
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    sexo: {
+                        required: true
+                    },
+                    area: {
+                        required: true
+                    },
+                    descripcion: {
+                        maxlength: 200
+                    },
+                    rol: {
+                        required: true
+                    }
+                },
+                messages: {
+                    nombre: {
+                        required: "El nombre es obligatorio",
+                        minlength: "El nombre debe tener al menos 3 caracteres",
+                        regex: "El nombre solo puede contener letras y espacios"
+                    },
+                    email: {
+                        required: "El correo electrónico es obligatorio",
+                        email: "Introduce un correo electrónico válido"
+                    },
+                    sexo: {
+                        required: "Selecciona un sexo"
+                    },
+                    area: {
+                        required: "Selecciona al menos un área"
+                    },
+                    descripcion: {
+                        maxlength: "La descripción no puede exceder los 200 caracteres"
+                    },
+                    rol: {
+                        required: "Selecciona al menos un rol"
+                    }
+                },
+                // Método para validar expresiones regulares en el cliente
+                rules: {
+                    regex: {
+                        regex: /^[a-zA-Z\s]+$/
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
-</html>
+
+</html>  

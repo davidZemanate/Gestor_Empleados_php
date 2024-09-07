@@ -8,18 +8,24 @@ class Empleado {
         $this->db = (new Database())->getConnection();
     }
 
-    public function getAllEmpleados() {
-        $sql = "SELECT * FROM empleados";
-        $result = $this->db->query($sql);
+    public function getEmpleadosConDatos() {
+        $query = "
+            SELECT e.id, e.nombre, e.email, e.sexo, a.nombre AS area_nombre, r.nombre AS rol_nombre
+            FROM empleados e
+            LEFT JOIN areas a ON e.area_id = a.id
+            LEFT JOIN roles r ON e.rol_id = r.id
+        ";
+
+        $result = $this->db->query($query);
 
         $empleados = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $empleados[] = $row;
-            }
+        while ($row = $result->fetch_assoc()) {
+            $empleados[] = $row;
         }
+
         return $empleados;
     }
+
 
     public function getAreas() {
         $sql = "SELECT * FROM areas";
@@ -50,15 +56,16 @@ class Empleado {
     public function addEmpleado($nombre, $email, $sexo, $area, $descripcion, $boletin, $rol) {
         $sql = "INSERT INTO empleados (nombre, email, sexo, area_id, descripcion, boletin, rol_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-
+    
         if (!$stmt) {
             die('Error en la preparación de la consulta: ' . $this->db->error);
         }
-
-        // Verifica que cada variable sea del tipo correcto
-        $stmt->bind_param('sssisis', $nombre, $email, $sexo, $area, $descripcion, $boletin, $rol);
-
+    
+        // Los tipos de datos en bind_param deben coincidir con el SQL
+        $stmt->bind_param('sssiisi', $nombre, $email, $sexo, $area, $descripcion, $boletin, $rol);
+    
         if ($stmt->execute()) {
+            $stmt->close();
             return true;
         } else {
             // Maneja los errores de SQL
@@ -68,8 +75,6 @@ class Empleado {
                 die('Error al ejecutar la consulta: ' . $stmt->error);
             }
         }
-
-        $stmt->close();
     }
 
     public function deleteEmpleado($id) {

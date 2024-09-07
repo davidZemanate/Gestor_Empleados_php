@@ -9,7 +9,7 @@ class EmpleadoControler {
     }
 
     public function getAllEmpleados() {
-        return $this->empleado->getAllEmpleados();
+        return $this->empleado->getEmpleadosConDatos();
     }
 
     public function getAreas() {
