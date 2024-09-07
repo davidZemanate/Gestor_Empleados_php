@@ -14,7 +14,7 @@ $descripcion = $_POST['descripcion'] ?? '';
 $boletin = isset($_POST['boletin']) ? 1 : 0;
 $roles = $_POST['rol'] ?? [];
 
-// Validar los datos en el servidor
+
 $errors = [];
 
 // Validar nombre

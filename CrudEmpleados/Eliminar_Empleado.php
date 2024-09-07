@@ -6,10 +6,10 @@ require_once 'modelo/Empleado.php';
 // Crear instancia de la clase Empleado
 $empleado = new Empleado();
 
-// Obtener el ID del empleado desde la URL
+
 $id = $_GET['id'] ?? '';
 
-// Validar el ID
+
 if (empty($id) || !is_numeric($id)) {
     die('ID del empleado no válido.');
 }
@@ -17,7 +17,7 @@ if (empty($id) || !is_numeric($id)) {
 // Llamar al método para eliminar el empleado
 $resultado = $empleado->deleteEmpleado((int)$id);
 
-// Redirigir según el resultado
+
 if ($resultado) {
     header('Location: index.php?success=Empleado eliminado exitosamente.');
 } else {

@@ -7,6 +7,9 @@ class Empleado {
     public function __construct() {
         $this->db = (new Database())->getConnection();
     }
+    public function prepare($query) {
+        return $this->db->prepare($query); 
+    }
 
     public function getEmpleadosConDatos() {
         $query = "
@@ -25,8 +28,16 @@ class Empleado {
 
         return $empleados;
     }
+       // Método para obtener empleado por ID
+    public function getEmpleadoById($id) {
+        $query = "SELECT * FROM empleados WHERE id = ?";
+        $stmt = $this->prepare($query);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
 
-
+    //traer las areas de la bd
     public function getAreas() {
         $sql = "SELECT * FROM areas";
         $result = $this->db->query($sql);
@@ -40,6 +51,7 @@ class Empleado {
         return $areas;
     }
 
+    //traer los roles de la bd
     public function getRoles() {
         $sql = "SELECT * FROM roles";
         $result = $this->db->query($sql);
@@ -53,6 +65,7 @@ class Empleado {
         return $roles;
     }
 
+    //agrear empleado
     public function addEmpleado($nombre, $email, $sexo, $area, $descripcion, $boletin, $rol) {
         $sql = "INSERT INTO empleados (nombre, email, sexo, area_id, descripcion, boletin, rol_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
@@ -61,7 +74,7 @@ class Empleado {
             die('Error en la preparación de la consulta: ' . $this->db->error);
         }
     
-        // Los tipos de datos en bind_param deben coincidir con el SQL
+      
         $stmt->bind_param('sssiisi', $nombre, $email, $sexo, $area, $descripcion, $boletin, $rol);
     
         if ($stmt->execute()) {
@@ -77,6 +90,7 @@ class Empleado {
         }
     }
 
+    //eliminar empleado
     public function deleteEmpleado($id) {
         $sql = "DELETE FROM empleados WHERE id = ?";
         $stmt = $this->db->prepare($sql);
@@ -95,5 +109,39 @@ class Empleado {
 
         $stmt->close();
     }
+
+    //actualizar empleado
+    public function updateEmpleado($id, $nombre, $email, $sexo, $area, $descripcion, $boletin, $rol) {
+        // Validar que el valor de area no esté vacío
+        if (empty($area)) {
+            die('El campo de área no puede estar vacío.');
+        }
+    
+        // Validar que el valor de rol no esté vacío
+        if (empty($rol)) {
+            die('El campo de rol no puede estar vacío.');
+        }
+    
+        $query = "UPDATE empleados SET nombre = ?, email = ?, sexo = ?, area_id = ?, descripcion = ?, boletin = ?, rol_id = ? WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+    
+        if ($stmt) {
+            // Asegúrate de que los datos sean correctos y en el formato adecuado
+            $stmt->bind_param("ssssssss", $nombre, $email, $sexo, $area, $descripcion, $boletin, $rol, $id);
+            $result = $stmt->execute();
+    
+            if ($result) {
+                echo "Empleado actualizado con éxito.";
+            } else {
+                die("Error al ejecutar la consulta: " . $this->db->error);
+            }
+    
+            $stmt->close();
+            return $result;
+        } else {
+            die("Error en la preparación de la consulta: " . $this->db->error);
+        }
+    }
+    
 }
 ?>

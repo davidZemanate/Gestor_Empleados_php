@@ -23,7 +23,7 @@ $roles = $controller->getRoles();
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Incluir FontAwesome CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    
+
 </head>
 
 
@@ -121,9 +121,9 @@ $roles = $controller->getRoles();
                             <label class="form-check-label" for="boletin">Quiero recibir boletín</label>
                         </div>
                         <div class="form-group">
-                            <label for="rol">Rol</label>
+                            <label for="rol">Rol <span class="text-danger">*</span></label>
                             <?php foreach ($roles as $rol): ?>
-                                <div class="form-check">
+                                <div class="form-check" required>
                                     <input type="checkbox" class="form-check-input" id="rol_<?php echo $rol['id']; ?>" name="rol[]" value="<?php echo $rol['id']; ?>">
                                     <label class="form-check-label" for="rol_<?php echo $rol['id']; ?>"><?php echo $rol['nombre']; ?></label>
                                 </div>
@@ -136,32 +136,33 @@ $roles = $controller->getRoles();
         </div>
     </div>
 
+    <!--alerta de messajes-->
     <?php if (isset($_GET['errors'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <?php echo htmlspecialchars($_GET['errors']); ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-<?php endif; ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($_GET['errors']); ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
 
-<?php if (isset($_GET['success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <?php echo htmlspecialchars($_GET['success']); ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-<?php endif; ?>
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($_GET['success']); ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
 
-<?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <?php echo htmlspecialchars($_GET['error']); ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-<?php endif; ?>
+    <?php if (isset($_GET['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($_GET['error']); ?>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <?php endif; ?>
 
 
     <footer class="bg-dark text-white text-center p-3 mt-4">
@@ -170,15 +171,15 @@ $roles = $controller->getRoles();
 
     <!-- Incluir jQuery y Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- Cambiar a la versión completa -->
-  
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.19.3/jquery.validate.min.js"></script>
     <script src="asstes\js\validacion.js"></script>
 
-    
+
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#addEmployeeForm").validate({
                 rules: {
                     nombre: {
@@ -238,4 +239,4 @@ $roles = $controller->getRoles();
 
 </body>
 
-</html>  
+</html>
